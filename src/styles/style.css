@@ -1,11 +1,60 @@
-@layer reset {
-}
-
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  *, *::before, *::after{
+    box-sizing: border-box;
+  } 
+
+  :root {
+
+    --font-sans: Arial, system-ui, sans-serif;
+    --font-serif: serif;
+
+    --color-background: #fff;
+    --color-background-dark: #000;
+
+    --color-foreground: #000;
+    --color-foreground-dark: #fff;
+
+    --breakpoint-sm: 450px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1084px;
+  }
+
+  body {
+    font-family: var(--font-sans);
+
+    background: light-dark(
+      var(--color-background),
+      var(--color-background-dark)
+    );
+    color: light-dark(
+      var(--color-foreground),
+      var(--color-foreground-dark)
+    );
+  }
 }
 
 @layer components {
+  @media screen and (min-width: var(--breakpoint-sm)) {
+  }
+
+  @media screen and (min-width: var(--breakpoint-md)) {
+  }
+
+  @media screen and (min-width: var(--breakpoint-lg)) {
+  }
 }
 
 @layer utilities {
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
 }
