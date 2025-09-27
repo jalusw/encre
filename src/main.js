@@ -1,9 +1,12 @@
 import "./styles/style.css";
 import "./pages/main.js";
 
-const init = () => {
+import DatabaseClient from "./db/client";
+
+const init = async () => {
   initServiceWorker();
   initRouting();
+  await initDatabase();
 };
 
 const initServiceWorker = () => {
@@ -17,6 +20,11 @@ const initServiceWorker = () => {
   } else {
     console.error("Service workers are not supported in this browser.");
   }
+};
+
+const initDatabase = async () => {
+  const client = new DatabaseClient();
+  await client.migrate();
 };
 
 const initRouting = () => {

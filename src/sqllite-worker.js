@@ -1,7 +1,6 @@
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import sqlite3WasmUrl from "@sqlite.org/sqlite-wasm/sqlite3.wasm?url";
 
-let sqlite3Instance = null;
 let dbInstance = null;
 
 onmessage = async (e) => {
@@ -10,23 +9,49 @@ onmessage = async (e) => {
 
     if (!dbInstance) {
       dbInstance = await initDB();
+      postMessage({ type: "ready" });
     }
 
-    switch (data.type) {
-      case "ping":
-        postMessage({ type: "pong" });
+    const { id, type, query } = data || {};
+
+    switch (type) {
+      case "ping": {
+        postMessage({ id, type: "pong" });
         return;
-      case "exec":
-        dbInstance.exec(data.query);
-        postMessage({ type: "exec", data: { query: data.query } });
+      }
+      case "migrate": {
+        dbInstance.exec(`
+          PRAGMA journal_mode=WAL;
+          CREATE TABLE IF NOT EXISTS notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )`);
+        postMessage({ id, type: "migrate", data: { ok: true } });
         return;
-      case "select":
-        const result = dbInstance.selectObjects(data.query);
-        postMessage({ type: "select", data: { query: data.query, result } });
+      }
+      case "exec": {
+        dbInstance.exec(query);
+        postMessage({ id, type: "exec", data: { ok: true } });
         return;
-      default:
-        console.error(`Unknown message type: ${data.type}`);
-        throw new Error(`Unknown message type: ${e.type}`);
+      }
+      case "select": {
+        const result = dbInstance.selectObjects(query);
+        postMessage({ id, type: "select", data: { ok: true, result } });
+        return;
+      }
+      case "export": {
+        const result = dbInstance.export();
+        postMessage({ id, type: "export", data: { ok: true, result } });
+        return;
+      }
+      default: {
+        const err = new Error(`Unknown message type: ${type}`);
+        postMessage({ id, type: "error", data: { error: err.message } });
+        return;
+      }
     }
   } catch (err) {
     console.error(err);
@@ -39,22 +64,11 @@ onerror = (e) => {
 };
 
 const initDB = async () => {
-  const sqlite3 = await sqlite3InitModule({
+  const sqlite3Instance = await sqlite3InitModule({
     locateFile: (file) => (file.endsWith(".wasm") ? sqlite3WasmUrl : file),
   });
 
-  sqlite3Instance = sqlite3;
-  dbInstance = new sqlite3.oo1.DB("/encre.db");
-
-  dbInstance.exec(`
-    PRAGMA journal_mode=WAL;
-    CREATE TABLE IF NOT EXISTS notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      content TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )`);
+  dbInstance = new sqlite3Instance.oo1.OpfsDb("/encre.db", "c");
 
   return dbInstance;
 };
