@@ -1,6 +1,6 @@
 class DatabaseClient {
   constructor() {
-    this.worker = new Worker(new URL("../sqllite-worker.js", import.meta.url), {
+    this.worker = new Worker(new URL("../sqlite-worker.js", import.meta.url), {
       type: "module",
     });
     this.nextId = 1;
