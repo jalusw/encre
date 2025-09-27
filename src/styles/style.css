@@ -9,6 +9,7 @@
   } 
 
   :root {
+    --base-font-size: 62.5%;
 
     --font-sans: Arial, system-ui, sans-serif;
     --font-serif: serif;
@@ -22,10 +23,20 @@
     --breakpoint-sm: 450px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 1084px;
+
+    --spacing-0: 0;
+    --spacing-0-5: 0.5rem;
+    --spacing-1: 1rem;
+    --spacing-2: 2rem;
+    --spacing-3: 4rem;
+    --spacing-4: 8rem;
+
+    font-size: var(--base-font-size);
   }
 
   body {
     font-family: var(--font-sans);
+    font-size: clamp(1.6rem, 1.6rem + 0.18vw, 2rem);
 
     background: light-dark(
       var(--color-background),
@@ -40,6 +51,13 @@
 
 @layer components {
   @media screen and (min-width: var(--breakpoint-sm)) {
+    .markdown-editor {
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+      padding: var(--spacing-4);
+    }
   }
 
   @media screen and (min-width: var(--breakpoint-md)) {
