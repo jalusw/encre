@@ -1,4 +1,5 @@
-import '../components/markdown-editor.js';
+import "../components/file-tree.js";
+import "../components/markdown-editor.js";
 
 export default class MainPage extends HTMLElement {
   constructor() {
@@ -20,4 +21,4 @@ export default class MainPage extends HTMLElement {
   }
 }
 
-customElements.define('main-page', MainPage);
+customElements.define("main-page", MainPage);
