@@ -1,5 +1,6 @@
-const markdownExample = `
-# Hello World
+import MarkdownBlock from "./markdown-block";
+
+const markdownExample = `# Hello World
 lorem ipsum dolor sit amet
 ---
 
@@ -20,18 +21,6 @@ lorem ipsum dolor sit amet
 ---
 `;
 
-export class MarkdownBlock extends HTMLElement {
-  constructor(content) {
-    super();
-    this.content = content;
-  }
-
-  connectedCallback() {
-    this.innerHTML = `<div contentEditable>
-      ${this.content}
-    </div>`;
-  }
-}
 export default class MarkdownEditor extends HTMLElement {
   constructor() {
     super();
@@ -51,4 +40,3 @@ export default class MarkdownEditor extends HTMLElement {
 }
 
 customElements.define("markdown-editor", MarkdownEditor);
-customElements.define("markdown-block", MarkdownBlock);
