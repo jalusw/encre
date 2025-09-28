@@ -1,5 +1,5 @@
-import "../components/file-tree.js";
-import "../components/markdown-editor.js";
+import FileTree from "../components/file-tree.js";
+import MarkdownEditor from "../components/markdown-editor.js";
 
 export default class MainPage extends HTMLElement {
   constructor() {
@@ -7,17 +7,13 @@ export default class MainPage extends HTMLElement {
   }
 
   connectedCallback() {
-    this.innerHTML = `
-      <style>
-        .main-page {
-          display: flex;
-        }
-      </style>
-      <main class="main-page">
-        <file-tree></file-tree>
-        <markdown-editor></markdown-editor>
-      </main>
-    `;
+    const fileTree = new FileTree();
+    const markdownEditor = new MarkdownEditor();
+
+    this.classList.add("main-page");
+
+    this.appendChild(fileTree);
+    this.appendChild(markdownEditor);
   }
 }
 
