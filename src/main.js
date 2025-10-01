@@ -1,7 +1,9 @@
 import "./styles/style.css";
-import "./pages/main.js";
 
-import DatabaseClient from "./db/client";
+import "./pages/main.js";
+import "./pages/note.js";
+
+import DatabaseClient from "./utils/db-client";
 
 const init = async () => {
   initServiceWorker();
@@ -30,11 +32,12 @@ const initDatabase = async () => {
 const initRouting = () => {
   const pages = {
     "/": "<main-page/>",
+    "/note/:id": "<note-page/>",
   };
-  const path = window.location.pathname;
+
   const app = document.getElementById("app");
 
-  app.innerHTML = pages[path];
+  app.innerHTML = pages[window.location.pathname] || pages["/"];
 };
 
 document.addEventListener("DOMContentLoaded", init);

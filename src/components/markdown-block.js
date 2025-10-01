@@ -1,21 +1,43 @@
+import { parseMarkdown, astToHtml } from "../utils/markdown-parser";
+
 export default class MarkdownBlock extends HTMLElement {
-  constructor(content, onChange) {
+  constructor() {
     super();
-    this.content = content.trim();
-    this.onChange = onChange;
+    this._markdown = this.textContent || "";
   }
 
   connectedCallback() {
-    this.classList = ["markdown-block"];
+    this.render();
+  }
 
-    this.contentEditable = true;
-    this.textContent = this.content;
+  static get observedAttributes() {
+    return ["markdown"];
+  }
 
-    this.addEventListener("input",() => {
-      if(this.onChange) {
-        this.onChange(this.innerHTML)
-      }
-    });
+  attributeChangedCallback(name, _old, value) {
+    if (name === "markdown") {
+      this._markdown = value || "";
+      this.render();
+    }
+  }
+
+  set markdown(v) {
+    this._markdown = String(v ?? "");
+    this.render();
+  }
+
+  get markdown() {
+    return this._markdown;
+  }
+
+  render() {
+    try {
+      const ast = parseMarkdown(this._markdown);
+      this.innerHTML = astToHtml(ast);
+    } catch (e) {
+      console.error(e);
+      this.innerHTML = "";
+    }
   }
 }
 

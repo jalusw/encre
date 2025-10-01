@@ -1,21 +1,19 @@
-import FileTree from "../components/file-tree.js";
-import NoteEditor from "../components/note-editor.js";
+import NoteEditor from "../components/note-editor";
+import FileTree from "../components/file-tree";
 
-export default class MainPage extends HTMLElement {
+export default class NotePage extends HTMLElement {
   constructor() {
     super();
   }
 
   connectedCallback() {
-    const fileTree = new FileTree();
+    this.classList.add("note-page");
     const noteEditor = new NoteEditor();
-
-    this.classList.add("main-page");
+    const fileTree = new FileTree();
 
     this.appendChild(fileTree);
     this.appendChild(noteEditor);
 
-    // Bubble selection to editor and refresh to tree
     fileTree.addEventListener("select-note", (e) =>
       noteEditor.dispatchEvent(
         new CustomEvent("select-note", { detail: e.detail })
@@ -25,4 +23,4 @@ export default class MainPage extends HTMLElement {
   }
 }
 
-customElements.define("main-page", MainPage);
+customElements.define("note-page", NotePage);

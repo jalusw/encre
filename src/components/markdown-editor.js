@@ -1,74 +1,122 @@
-import MarkdownBlock from "./markdown-block";
-
-const markdownExample = `# Hello World
-lorem ipsum dolor sit amet
----
-
-## Lorem Ipsum dolor sit amet
-lorem ipsum dolor sit amet
----
-
-## Lorem Ipsum dolor sit amet
-lorem ipsum dolor sit amet
----
-
-## Lorem Ipsum dolor sit amet
-lorem ipsum dolor sit amet
----
-
-## Lorem Ipsum dolor sit amet
-lorem ipsum dolor sit amet
----`;
-
-function createState(initialState, onChange) {
-  return new Proxy({
-    listeners: [],
-    ...initialState,
-    },{
-    set(target, key, value) {
-      target[key] = value;
-      onChange(target);
-      return true;
-    },
-  });
-}
+import {
+  parseMarkdown,
+  astToHtml,
+  htmlToMarkdown,
+} from "../utils/markdown-parser";
 
 export default class MarkdownEditor extends HTMLElement {
   constructor() {
     super();
+    this._value = "";
+    this._editorEl = null;
+    this._viewerEl = null;
   }
 
   connectedCallback() {
-    this.state = createState(
-      {
-        content: markdownExample.split("\n"),
-      },
-      () => {
-        this.render();
+    this.classList.add("note-editor");
+
+    const editor = document.createElement("textarea");
+    const viewer = document.createElement("div");
+
+    editor.classList.add("note-editor__editor");
+    viewer.classList.add("note-editor__viewer");
+
+    this.appendChild(editor);
+    this.appendChild(viewer);
+
+    this._editorEl = editor;
+    this._viewerEl = viewer;
+
+    // Initial render
+    editor.value = this._value;
+    // Stretch the textarea and remove manual resize
+    editor.setAttribute("spellcheck", "false");
+
+    // Sync height with viewport for a better split view
+    const resize = () => {
+      editor.style.height = `${window.innerHeight - 2 * 16}px`;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    this.#renderPreview();
+
+    editor.addEventListener("input", () => {
+      this._value = editor.value;
+      this.#renderPreview();
+      this.#emitChange();
+    });
+
+    // Enable Ctrl/Cmd+S to emit a save event with markdown/html payload
+    this.addEventListener("keydown", (e) => {
+      const isSave =
+        (e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S");
+      if (isSave) {
+        e.preventDefault();
+        this.dispatchEvent(
+          new CustomEvent("save", {
+            bubbles: true,
+            detail: {
+              markdown: this.value,
+              html: this.html,
+            },
+          })
+        );
       }
+    });
+  }
+
+  set value(v) {
+    this._value = String(v ?? "");
+    if (this._editorEl) {
+      this._editorEl.value = this._value;
+      this.#renderPreview();
+    }
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  get ast() {
+    try {
+      return parseMarkdown(this._value || "");
+    } catch (e) {
+      console.error(e);
+      return { type: "Document", children: [] };
+    }
+  }
+
+  get html() {
+    try {
+      return astToHtml(this.ast);
+    } catch (e) {
+      console.error(e);
+      return "";
+    }
+  }
+
+  // Accept external HTML and convert to markdown for the editor value
+  set html(v) {
+    const md = htmlToMarkdown(String(v ?? ""));
+    this.value = md;
+  }
+
+  #renderPreview() {
+    if (!this._viewerEl) return;
+    this._viewerEl.innerHTML = this.html;
+  }
+
+  #emitChange() {
+    this.dispatchEvent(
+      new CustomEvent("change", {
+        bubbles: true,
+        detail: {
+          markdown: this._value,
+          ast: this.ast,
+          html: this.html,
+        },
+      })
     );
-    this.render();
-  }
-
-  render() {
-    this.classList.add("markdown-editor");
-
-    this.state.content.map((item, index) => {
-      this.appendChild(new MarkdownBlock(item, (v) => {
-      }));
-    });
-
-    this.appendChild(this.createBlock());
-  }
-
-  createBlock() {
-    const block = new MarkdownBlock("", (v) => {
-      console.log(v);
-    });
-    block.addEventListener("click", () => {
-      this.appendChild(block);
-    });
-    return block;
   }
 }
 
