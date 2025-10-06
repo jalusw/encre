@@ -34,6 +34,17 @@ export default class NoteEditor extends HTMLElement {
       await this.#load(id, mdEditor);
     });
 
+    // Clear editor if the currently open note gets deleted
+    this.addEventListener("note-deleted", (e) => {
+      const deletedId = e.detail?.id;
+      if (deletedId == null) return;
+      if (this.state.currentId === deletedId) {
+        this.state.currentId = null;
+        this._lastSavedContent = null;
+        mdEditor.value = "";
+      }
+    });
+
     this.appendChild(mdEditor);
   }
 

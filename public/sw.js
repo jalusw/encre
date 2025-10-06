@@ -1,19 +1,15 @@
+/* PWA Service Worker - built from src/service-worker.js (kept simple for Vite static serve) */
 const APP_CACHE = "encre-app-v1";
 const STATIC_CACHE = "encre-static-v1";
 const FONT_CACHE = "encre-fonts-v1";
 
-const APP_SHELL = [
-  "/", // main shell
-  "/src/manifest.json",
-  "/favicon.svg",
-];
+const APP_SHELL = ["/", "/src/manifest.json", "/favicon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(APP_CACHE);
       await cache.addAll(APP_SHELL);
-      // Activate new SW immediately
       await self.skipWaiting();
     })()
   );
@@ -22,7 +18,6 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
-      // Clean up old caches
       const keys = await caches.keys();
       await Promise.all(
         keys
@@ -47,13 +42,11 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Handle navigation: network-first with offline fallback to app shell
   if (request.mode === "navigate") {
     event.respondWith(
       (async () => {
         try {
           const res = await fetch(request);
-          // Optionally update cached shell with latest index via navigation preload
           const cache = await caches.open(APP_CACHE);
           await cache.put("/", res.clone());
           return res;
@@ -61,7 +54,6 @@ self.addEventListener("fetch", (event) => {
           const cache = await caches.open(APP_CACHE);
           const cached = await cache.match("/");
           if (cached) return cached;
-          // Final fallback: try any cached app shell
           const keys = await cache.keys();
           return (keys.length && cache.match(keys[0])) || Response.error();
         }
@@ -70,7 +62,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Fonts from Google: cache-first
   if (
     url.origin.includes("fonts.googleapis.com") ||
     url.origin.includes("fonts.gstatic.com")
@@ -88,17 +79,11 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Same-origin static assets: stale-while-revalidate
   if (
     isSameOrigin(request.url) &&
-    [
-      "style",
-      "script",
-      "image",
-      "font",
-      "worker",
-      "document", // in case of partial document loads
-    ].includes(request.destination)
+    ["style", "script", "image", "font", "worker", "document"].includes(
+      request.destination
+    )
   ) {
     event.respondWith(
       (async () => {
@@ -113,13 +98,9 @@ self.addEventListener("fetch", (event) => {
         return cached || (await fetchPromise) || fetch(request);
       })()
     );
-    return;
   }
 });
 
-// Support promptless update via postMessage('skipWaiting')
 self.addEventListener("message", (event) => {
-  if (event.data === "skipWaiting") {
-    self.skipWaiting();
-  }
+  if (event.data === "skipWaiting") self.skipWaiting();
 });

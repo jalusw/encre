@@ -246,6 +246,15 @@
     gap: 0.6rem;
   }
 
+  .file-tree__search {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid color-mix(in oklab, currentColor 15%, transparent);
+    background: light-dark(#ffffff, #1a1a1a);
+    color: inherit;
+  }
   .file-tree__title {
     font-weight: 700;
   }
@@ -273,11 +282,44 @@
   }
 
   .file-tree__file {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
     cursor: pointer;
     padding: var(--spacing-1);
     border-radius: var(--spacing-1);
     overflow: hidden;
+  }
+
+  .file-tree__file-title {
+    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-tree__delete {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+    background: color-mix(in oklab, currentColor 8%, transparent);
+    color: inherit;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 120ms ease-in-out, visibility 120ms ease-in-out;
+  }
+  .file-tree__delete:hover {
+    background: color-mix(in oklab, currentColor 14%, transparent);
+  }
+
+  /* Reveal delete on list item hover or when button is focused via keyboard */
+  .file-tree__file:hover .file-tree__delete,
+  .file-tree__delete:focus-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .file-tree__file:hover {

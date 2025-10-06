@@ -15,12 +15,9 @@ const init = async () => {
 
 const initServiceWorker = () => {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register(
-      new URL("./service-worker.js", import.meta.url),
-      {
-        type: "module",
-      }
-    );
+    navigator.serviceWorker
+      .register("/sw.js", { scope: "/" })
+      .catch((e) => console.error("SW registration failed", e));
   } else {
     console.error("Service workers are not supported in this browser.");
   }

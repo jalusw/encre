@@ -40,6 +40,19 @@ export function applyTheme(theme = getTheme()) {
     root.style.colorScheme = "light dark";
     root.dataset.theme = "auto";
   }
+  // Update theme-color meta for PWA status bar
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) {
+    if (theme === "dark") {
+      meta.setAttribute("content", "#000000");
+    } else if (theme === "light") {
+      meta.setAttribute("content", "#ffffff");
+    } else {
+      // auto: infer from computed background
+      const bg = getComputedStyle(document.body).backgroundColor;
+      meta.setAttribute("content", bg || "#ffffff");
+    }
+  }
 }
 
 export function initTheme() {
