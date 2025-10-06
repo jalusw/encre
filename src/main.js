@@ -4,8 +4,10 @@ import "./pages/main.js";
 import "./pages/note.js";
 
 import DatabaseClient from "./utils/db-client";
+import { initTheme } from "./utils/theme";
 
 const init = async () => {
+  initTheme();
   initServiceWorker();
   initRouting();
   await initDatabase();

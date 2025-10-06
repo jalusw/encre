@@ -1,4 +1,5 @@
 import DatabaseClient from "../utils/db-client";
+// theme is adjusted via the top navbar now
 
 export default class FileTree extends HTMLElement {
   constructor() {
@@ -11,14 +12,19 @@ export default class FileTree extends HTMLElement {
     this.classList = ["file-tree"];
 
     const header = document.createElement("div");
-    header.classList.add("file-tree__header");
-    header.innerHTML = `<span class="file-tree__title">Notes</span>`;
+    const actions = document.createElement("div");
+    actions.classList.add("file-tree__actions");
 
     const newBtn = document.createElement("button");
     newBtn.classList.add("file-tree__new-btn");
     newBtn.textContent = "+ New";
+    newBtn.setAttribute("aria-label", "Create new note");
     newBtn.addEventListener("click", () => this.#createNewNote());
-    header.appendChild(newBtn);
+    actions.appendChild(newBtn);
+
+    // Theme toggle moved to navbar
+
+    header.appendChild(actions);
 
     const list = document.createElement("ul");
     list.classList.add("file-tree__files");

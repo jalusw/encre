@@ -1,5 +1,6 @@
 import FileTree from "../components/file-tree.js";
 import NoteEditor from "../components/note-editor.js";
+import "../components/navbar.js";
 
 export default class MainPage extends HTMLElement {
   constructor() {
@@ -12,8 +13,16 @@ export default class MainPage extends HTMLElement {
 
     this.classList.add("main-page");
 
-    this.appendChild(fileTree);
-    this.appendChild(noteEditor);
+    const navbar = document.createElement("app-navbar");
+    navbar.classList.add("main-page__navbar");
+
+    const content = document.createElement("div");
+    content.classList.add("main-page__content");
+    content.appendChild(fileTree);
+    content.appendChild(noteEditor);
+
+    this.appendChild(navbar);
+    this.appendChild(content);
 
     // Bubble selection to editor and refresh to tree
     fileTree.addEventListener("select-note", (e) =>
