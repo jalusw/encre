@@ -12,7 +12,8 @@ export default class NoteEditor extends HTMLElement {
   }
 
   connectedCallback() {
-    this.classList.add("note-editor");
+    // Host container should flex to fill space next to file tree
+    this.classList.add("note-editor-host");
 
     const mdEditor = document.createElement("markdown-editor");
     mdEditor.value = "# Hello";

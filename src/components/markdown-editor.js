@@ -34,7 +34,10 @@ export default class MarkdownEditor extends HTMLElement {
 
     // Sync height with viewport for a better split view
     const resize = () => {
-      editor.style.height = `${window.innerHeight - 2 * 16}px`;
+      // keep both panes visually aligned
+      const h = window.innerHeight - 2 * 16; // padding approximation
+      editor.style.height = `${h}px`;
+      // viewer uses flex + overflow; no explicit height needed
     };
     resize();
     window.addEventListener("resize", resize);
@@ -45,6 +48,16 @@ export default class MarkdownEditor extends HTMLElement {
       this.#renderPreview();
       this.#emitChange();
     });
+
+    // keep preview scrolled in proportion to textarea
+    const syncScroll = () => {
+      const maxEditorScroll = editor.scrollHeight - editor.clientHeight;
+      const maxViewerScroll = viewer.scrollHeight - viewer.clientHeight;
+      if (maxEditorScroll <= 0 || maxViewerScroll <= 0) return;
+      const ratio = editor.scrollTop / maxEditorScroll;
+      viewer.scrollTop = Math.round(ratio * maxViewerScroll);
+    };
+    editor.addEventListener("scroll", syncScroll);
 
     // Enable Ctrl/Cmd+S to emit a save event with markdown/html payload
     this.addEventListener("keydown", (e) => {

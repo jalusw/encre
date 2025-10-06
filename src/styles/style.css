@@ -56,6 +56,12 @@
     overflow: auto;
   }
 
+  .note-editor-host {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+  }
+
   .note-editor {
     display: flex;
     width: 100%;
@@ -90,6 +96,73 @@
     padding: var(--spacing-2);
     overflow: auto;
     background: light-dark(#fff, #0f0f0f);
+  }
+
+  /* Markdown content inside preview */
+  .note-editor__viewer :where(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.25;
+    margin: 0.2em 0 0.4em;
+  }
+  .note-editor__viewer h1 {
+    font-size: 1.8em;
+  }
+  .note-editor__viewer h2 {
+    font-size: 1.6em;
+  }
+  .note-editor__viewer h3 {
+    font-size: 1.35em;
+  }
+  .note-editor__viewer h4 {
+    font-size: 1.2em;
+  }
+  .note-editor__viewer h5 {
+    font-size: 1.05em;
+  }
+  .note-editor__viewer h6 {
+    font-size: 1em;
+    opacity: 0.9;
+  }
+
+  .note-editor__viewer p {
+    margin: 0.6em 0;
+  }
+  .note-editor__viewer ul,
+  .note-editor__viewer ol {
+    padding-left: 1.6em;
+    margin: 0.6em 0;
+  }
+  .note-editor__viewer li + li {
+    margin-top: 0.25em;
+  }
+
+  .note-editor__viewer code {
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    background: color-mix(in oklab, currentColor 10%, transparent);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.95em;
+  }
+  .note-editor__viewer pre {
+    overflow: auto;
+    padding: 1em;
+    border-radius: 8px;
+    background: light-dark(#f5f5f7, #131313);
+  }
+  .note-editor__viewer pre code {
+    background: transparent;
+    padding: 0;
+  }
+  .note-editor__viewer blockquote {
+    border-left: 4px solid color-mix(in oklab, currentColor 20%, transparent);
+    padding-left: 1em;
+    margin: 0.6em 0;
+    opacity: 0.95;
+  }
+  .note-editor__viewer hr {
+    border: none;
+    border-top: 1px solid color-mix(in oklab, currentColor 15%, transparent);
+    margin: 1em 0;
   }
 
   .editor-block {

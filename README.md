@@ -5,16 +5,13 @@ formatting. The web app has offline capabilities and stores your notes in the lo
 which allows you to open it and write notes without an internet connection.
 
 The app is built with vanilla js and web capabilities such as service & web workers.
-to store the notes this app leverages sqlite's web assembly to store the notes in the local storage.
+to store the notes this app leverages sqlite's web assembly to store the notes through origin private file system.
 
 Features:
 
 - Markdown formatting
 - Offline capabilities
-- Local storage (your notes are stored in the local storage)
-- Dark mode
-- Light mode
-- System default mode (follows the system's dark/light mode)
+- (Dark/Light) Theme support
 
 ## Getting Started
 
