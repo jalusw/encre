@@ -48,4 +48,4 @@ pnpm preview
 
 ## License
 
-This project is licensed under the [GNU General Public License V3](LICENSE.md)
+This project is licensed under the [MIT License](LICENSE.md)
