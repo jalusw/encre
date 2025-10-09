@@ -27,8 +27,8 @@ export default class MainPage extends HTMLElement {
     // Bubble selection to editor and refresh to tree
     fileTree.addEventListener("select-note", (e) =>
       noteEditor.dispatchEvent(
-        new CustomEvent("select-note", { detail: e.detail })
-      )
+        new CustomEvent("select-note", { detail: e.detail }),
+      ),
     );
     noteEditor.addEventListener("refresh-files", () => fileTree.refresh());
   }

@@ -12,7 +12,6 @@ export default class NoteEditor extends HTMLElement {
   }
 
   connectedCallback() {
-    // Host container should flex to fill space next to file tree
     this.classList.add("note-editor-host");
 
     const mdEditor = document.createElement("markdown-editor");
@@ -22,19 +21,16 @@ export default class NoteEditor extends HTMLElement {
       await this.#persistAndRefresh(e.detail.markdown);
     });
 
-    // Debounced autosave on change
     mdEditor.addEventListener("change", (e) => {
       this.#scheduleSave(e.detail?.markdown ?? "");
     });
 
-    // Listen to file selection from FileTree
     this.addEventListener("select-note", async (e) => {
       const id = e.detail?.id;
       if (id == null) return;
       await this.#load(id, mdEditor);
     });
 
-    // Clear editor if the currently open note gets deleted
     this.addEventListener("note-deleted", (e) => {
       const deletedId = e.detail?.id;
       if (deletedId == null) return;
@@ -51,7 +47,7 @@ export default class NoteEditor extends HTMLElement {
   async #load(id, mdEditor) {
     try {
       const { result } = await this.client.select(
-        `SELECT id, title, content FROM notes WHERE id = ${Number(id)} LIMIT 1`
+        `SELECT id, title, content FROM notes WHERE id = ${Number(id)} LIMIT 1`,
       );
       const row = result?.[0];
       if (row) {
@@ -65,7 +61,7 @@ export default class NoteEditor extends HTMLElement {
   }
 
   #scheduleSave(markdown) {
-    if (markdown === this._lastSavedContent) return; // no-op
+    if (markdown === this._lastSavedContent) return;
     if (this._saveTimer) clearTimeout(this._saveTimer);
     this._saveTimer = setTimeout(async () => {
       await this.#persistAndRefresh(markdown);
@@ -88,21 +84,21 @@ export default class NoteEditor extends HTMLElement {
             '${this.#escape(markdown)}',
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
-          )`
+          )`,
         );
         const { result } = await this.client.select(
-          `SELECT id FROM notes ORDER BY id DESC LIMIT 1`
+          `SELECT id FROM notes ORDER BY id DESC LIMIT 1`,
         );
         this.state.currentId = result?.[0]?.id ?? null;
       } else {
         await this.client.exec(
           `UPDATE notes SET title='${this.#escape(
-            title
+            title,
           )}', content='${this.#escape(
-            markdown
+            markdown,
           )}', updated_at=CURRENT_TIMESTAMP WHERE id=${Number(
-            this.state.currentId
-          )}`
+            this.state.currentId,
+          )}`,
         );
       }
     } catch (err) {

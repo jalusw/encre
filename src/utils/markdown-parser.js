@@ -396,7 +396,7 @@ export function htmlToMarkdown(html) {
   const doc = parser.parseFromString(html, "text/html");
 
   return Array.from(doc.body.childNodes)
-    .map(node => nodeToMarkdown(node))
+    .map((node) => nodeToMarkdown(node))
     .filter(Boolean)
     .join("\n\n"); // double newline between block elements
 }
@@ -415,27 +415,39 @@ function nodeToMarkdown(node) {
     .join("");
 
   switch (tag) {
-    case "h1": return `# ${children}`;
-    case "h2": return `## ${children}`;
-    case "h3": return `### ${children}`;
-    case "h4": return `#### ${children}`;
-    case "h5": return `##### ${children}`;
-    case "h6": return `###### ${children}`;
+    case "h1":
+      return `# ${children}`;
+    case "h2":
+      return `## ${children}`;
+    case "h3":
+      return `### ${children}`;
+    case "h4":
+      return `#### ${children}`;
+    case "h5":
+      return `##### ${children}`;
+    case "h6":
+      return `###### ${children}`;
 
-    case "p": return children;
+    case "p":
+      return children;
 
     case "strong":
-    case "b": return `**${children}**`;
+    case "b":
+      return `**${children}**`;
 
     case "em":
-    case "i": return `*${children}*`;
+    case "i":
+      return `*${children}*`;
 
     case "a":
       const href = node.getAttribute("href") || "";
       return `[${children}](${href})`;
 
     case "code":
-      if (node.parentElement && node.parentElement.tagName.toLowerCase() === "pre") {
+      if (
+        node.parentElement &&
+        node.parentElement.tagName.toLowerCase() === "pre"
+      ) {
         return null; // handled at <pre>
       }
       return `\`${children}\``;
@@ -447,7 +459,7 @@ function nodeToMarkdown(node) {
 
     case "ul":
       return Array.from(node.children)
-        .map(li => `- ${nodeToMarkdown(li)}`)
+        .map((li) => `- ${nodeToMarkdown(li)}`)
         .join("\n");
 
     case "ol":
@@ -461,11 +473,10 @@ function nodeToMarkdown(node) {
     case "blockquote":
       return children
         .split("\n")
-        .map(line => `> ${line}`)
+        .map((line) => `> ${line}`)
         .join("\n");
 
     default:
       return children; // fallback: treat unknown tags as text
   }
 }
-

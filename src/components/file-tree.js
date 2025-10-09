@@ -1,5 +1,4 @@
 import DatabaseClient from "../utils/db-client";
-// theme is adjusted via the top navbar now
 
 export default class FileTree extends HTMLElement {
   constructor() {
@@ -18,7 +17,6 @@ export default class FileTree extends HTMLElement {
     const actions = document.createElement("div");
     actions.classList.add("file-tree__actions");
 
-    // Search input
     const search = document.createElement("input");
     search.type = "search";
     search.placeholder = "Search notes...";
@@ -33,7 +31,6 @@ export default class FileTree extends HTMLElement {
     newBtn.addEventListener("click", () => this.#createNewNote());
     actions.appendChild(newBtn);
 
-    // Theme toggle moved to navbar
     header.appendChild(search);
     header.appendChild(actions);
 
@@ -98,7 +95,6 @@ export default class FileTree extends HTMLElement {
 
   async #createNewNote() {
     try {
-      // Default content for a new note
       const content = "# New Note\n\nStart typing...";
       const title = this.#deriveTitle(content);
       await this.client.exec(
@@ -109,7 +105,7 @@ export default class FileTree extends HTMLElement {
           CURRENT_TIMESTAMP
         )`
       );
-      // Fetch the newly created id
+
       const { result } = await this.client.select(
         `SELECT id FROM notes ORDER BY id DESC LIMIT 1`
       );
@@ -138,7 +134,6 @@ export default class FileTree extends HTMLElement {
   }
 
   #escapeLike(s) {
-    // Escape for LIKE and quotes; use ESCAPE '\\' in SQL
     return this.#escape(
       String(s)
         .replaceAll("\\", "\\\\")
@@ -158,7 +153,6 @@ export default class FileTree extends HTMLElement {
       const ok = confirm("Delete this note? This cannot be undone.");
       if (!ok) return;
       await this.client.exec(`DELETE FROM notes WHERE id = ${Number(id)}`);
-      // Inform listeners so editor can clear if needed
       this.dispatchEvent(
         new CustomEvent("note-deleted", { bubbles: true, detail: { id } })
       );

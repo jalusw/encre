@@ -16,8 +16,8 @@ export default class NotePage extends HTMLElement {
 
     fileTree.addEventListener("select-note", (e) =>
       noteEditor.dispatchEvent(
-        new CustomEvent("select-note", { detail: e.detail })
-      )
+        new CustomEvent("select-note", { detail: e.detail }),
+      ),
     );
     noteEditor.addEventListener("refresh-files", () => fileTree.refresh());
   }

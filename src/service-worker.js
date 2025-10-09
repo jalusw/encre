@@ -15,7 +15,7 @@ self.addEventListener("install", (event) => {
       await cache.addAll(APP_SHELL);
       // Activate new SW immediately
       await self.skipWaiting();
-    })()
+    })(),
   );
 });
 
@@ -27,10 +27,10 @@ self.addEventListener("activate", (event) => {
       await Promise.all(
         keys
           .filter((k) => ![APP_CACHE, STATIC_CACHE, FONT_CACHE].includes(k))
-          .map((k) => caches.delete(k))
+          .map((k) => caches.delete(k)),
       );
       await self.clients.claim();
-    })()
+    })(),
   );
 });
 
@@ -65,7 +65,7 @@ self.addEventListener("fetch", (event) => {
           const keys = await cache.keys();
           return (keys.length && cache.match(keys[0])) || Response.error();
         }
-      })()
+      })(),
     );
     return;
   }
@@ -83,7 +83,7 @@ self.addEventListener("fetch", (event) => {
         const res = await fetch(request);
         cache.put(request, res.clone());
         return res;
-      })()
+      })(),
     );
     return;
   }
@@ -111,7 +111,7 @@ self.addEventListener("fetch", (event) => {
           })
           .catch(() => undefined);
         return cached || (await fetchPromise) || fetch(request);
-      })()
+      })(),
     );
     return;
   }
